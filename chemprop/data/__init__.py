@@ -18,10 +18,10 @@ from .utils import (
     get_header,
     get_smiles,
     get_task_names,
+    preprocess_smiles_columns,
     split_data,
     validate_data,
-    validate_dataset_type,
-    preprocess_smiles_columns
+    validate_dataset_type
 )
 
 __all__ = [
@@ -31,6 +31,7 @@ __all__ = [
     'MoleculeDataset',
     'MoleculeDataLoader',
     'MoleculeSampler',
+    'preprocess_smiles_columns',
     'set_cache_graph',
     'set_cache_mol',
     'generate_scaffold',

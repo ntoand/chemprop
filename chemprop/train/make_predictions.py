@@ -137,9 +137,6 @@ def make_predictions(args: PredictArgs, smiles: List[List[str]] = None) -> List[
 
             smiles_columns = args.smiles_columns
 
-            if None in smiles_columns:
-                smiles_columns = get_header(args.test_path)[:len(smiles_columns)]
-
             for column, smiles in zip(smiles_columns, datapoint.smiles):
                 datapoint.row[column] = smiles
 

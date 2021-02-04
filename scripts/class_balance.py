@@ -25,8 +25,8 @@ def class_balance(data_path: str, split_type: str):
     args.split_type = 'predetermined'
 
     # Load data
-    data = get_data(path=args.data_path, smiles_columns=args.smiles_column, target_columns=args.target_columns)
-    args.task_names = args.target_columns or get_task_names(path=args.data_path, smiles_columns=args.smiles_column)
+    data = get_data(path=args.data_path, smiles_columns=args.smiles_columns, target_columns=args.target_columns)
+    args.task_names = get_task_names(path=args.data_path, smiles_columns=args.smiles_columns, target_columns=args.target_columns)
 
     # Average class sizes
     all_class_sizes = {
