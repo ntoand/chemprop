@@ -482,7 +482,8 @@ class PredictArgs(CommonArgs):
 
         self.smiles_columns = chemprop.data.utils.preprocess_smiles_columns(path=self.test_path,
                                                 smiles_columns=self.smiles_columns,
-                                                number_of_molecules=self.number_of_molecules)
+                                                number_of_molecules=self.number_of_molecules,
+                                                header_check=False)
 
         if self.checkpoint_paths is None or len(self.checkpoint_paths) == 0:
             raise ValueError('Found no checkpoints. Must specify --checkpoint_path <path> or '
@@ -579,7 +580,8 @@ class SklearnPredictArgs(Tap):
 
         self.smiles_columns = chemprop.data.utils.preprocess_smiles_columns(path=self.test_path,
                                                         smiles_columns=self.smiles_columns,
-                                                        number_of_molecules=self.number_of_molecules)
+                                                        number_of_molecules=self.number_of_molecules,
+                                                        header_check=False)
 
         # Load checkpoint paths
         self.checkpoint_paths = get_checkpoint_paths(

@@ -18,7 +18,8 @@ from chemprop.features import load_features, load_valid_atom_features
 
 def preprocess_smiles_columns(path: str,
                               smiles_columns: Optional[Union[str, List[Optional[str]]]],
-                              number_of_molecules: int = 1) -> List[Optional[str]]:
+                              number_of_molecules: int = 1,
+                              header_check: bool = True) -> List[Optional[str]]:
     """
     Preprocesses the :code:`smiles_columns` variable to ensure that it is a list of column
     headings corresponding to the columns in the data file holding SMILES.
@@ -28,19 +29,28 @@ def preprocess_smiles_columns(path: str,
                            By default, uses the first :code:`number_of_molecules` columns.
     :param number_of_molecules: The number of molecules with associated SMILES for each
                            data point.
+    :param header_check: A bool value for whether or not to reference the header of the csv
+                           file at the provided path. This may be False for prediction tasks.
     :return: The preprocessed version of :code:`smiles_columns` which is guaranteed to be a list.
     """
     if type(smiles_columns) != list:
         smiles_columns = [smiles_columns]
 
-    columns = get_header(path)
-    
-    if smiles_columns == [None]:
-        smiles_columns = columns[:number_of_molecules]
-    elif len(smiles_columns) != number_of_molecules:
+    if header_check:
+        columns = get_header(path)
+        if smiles_columns == [None]:
+            smiles_columns = columns[:number_of_molecules]
+        elif any([smiles not in columns for smiles in smiles_columns]):
+            raise ValueError('Provided smiles_columns do not match the header of data file.')
+    else:
+        if smiles_columns == [None]:
+            if number_of_molecules == 1:
+                smiles_columns = ['smiles']
+            else:
+                smiles_columns = [f'smiles_{i}' for i in range(number_of_molecules)]
+
+    if len(smiles_columns) != number_of_molecules:
         raise ValueError('Length of smiles_columns must match number_of_molecules.')
-    elif any([smiles not in columns for smiles in smiles_columns]):
-        raise ValueError('Provided smiles_columns do not match the header of data file.')
 
     return smiles_columns
 
@@ -208,7 +218,6 @@ def get_data(path: str,
     # Load data
     with open(path) as f:
         reader = csv.DictReader(f)
-        columns = reader.fieldnames
 
         # By default, the targets columns are all the columns except the SMILES column
         if target_columns is None:
