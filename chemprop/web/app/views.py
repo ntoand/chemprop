@@ -5,6 +5,7 @@ import io
 import os
 import sys
 import shutil
+import csv
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 import time
 from typing import Callable, List, Tuple
@@ -341,9 +342,14 @@ def predict():
     gpu = request.form.get('gpu')
     train_args = load_args(model_paths[0])
 
+    dummy_test_path=os.path.join(app.config['TEMP_FOLDER'],'temp_input.csv')
+    with open(dummy_test_path,'w') as f:
+        writer=csv.writer(f)
+        writer.writerow(['smiles'])
+
     # Build arguments
     arguments = [
-        '--test_path', 'None',
+        '--test_path', dummy_test_path,
         '--preds_path', os.path.join(app.config['TEMP_FOLDER'], app.config['PREDICTIONS_FILENAME']),
         '--checkpoint_paths', *model_paths
     ]
