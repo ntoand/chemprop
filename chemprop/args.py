@@ -8,7 +8,8 @@ from typing_extensions import Literal
 import torch
 from tap import Tap  # pip install typed-argument-parser (https://github.com/swansonk14/typed-argument-parser)
 
-from chemprop.data import set_cache_mol, preprocess_smiles_columns
+import chemprop.data.utils
+from chemprop.data import set_cache_mol
 from chemprop.features import get_available_features_generators
 
 
@@ -384,7 +385,7 @@ class TrainArgs(CommonArgs):
         global temp_dir  # Prevents the temporary directory from being deleted upon function return
 
         # Process SMILES columns
-        self.smiles_columns = preprocess_smiles_columns(path=self.data_path,
+        self.smiles_columns = chemprop.data.utils.preprocess_smiles_columns(path=self.data_path,
                                                 smiles_columns=self.smiles_columns,
                                                 number_of_molecules=self.number_of_molecules)
 
@@ -479,7 +480,7 @@ class PredictArgs(CommonArgs):
     def process_args(self) -> None:
         super(PredictArgs, self).process_args()
 
-        self.smiles_columns = preprocess_smiles_columns(path=self.test_path,
+        self.smiles_columns = chemprop.data.utils.preprocess_smiles_columns(path=self.test_path,
                                                 smiles_columns=self.smiles_columns,
                                                 number_of_molecules=self.number_of_molecules)
 
@@ -511,7 +512,7 @@ class InterpretArgs(CommonArgs):
     def process_args(self) -> None:
         super(InterpretArgs, self).process_args()
 
-        self.smiles_columns = preprocess_smiles_columns(path=self.data_path,
+        self.smiles_columns = chemprop.data.utils.preprocess_smiles_columns(path=self.data_path,
                                                 smiles_columns=self.smiles_columns,
                                                 number_of_molecules=self.number_of_molecules)
 
@@ -576,7 +577,7 @@ class SklearnPredictArgs(Tap):
 
     def process_args(self) -> None:
 
-        self.smiles_columns = preprocess_smiles_columns(path=self.test_path,
+        self.smiles_columns = chemprop.data.utils.preprocess_smiles_columns(path=self.test_path,
                                                         smiles_columns=self.smiles_columns,
                                                         number_of_molecules=self.number_of_molecules)
 
