@@ -116,7 +116,7 @@ def make_predictions(args: PredictArgs, smiles: List[List[str]] = None) -> List[
     avg_preds = avg_preds.tolist()
 
     # Save predictions
-    print(f'Saving predictions to {args.preds_path}')
+    #print(f'Saving predictions to {args.preds_path}')
     assert len(test_data) == len(avg_preds)
     makedirs(args.preds_path, isfile=True)
 
@@ -148,19 +148,28 @@ def make_predictions(args: PredictArgs, smiles: List[List[str]] = None) -> List[
             datapoint.row[pred_name] = pred
 
     # Save
+    """
     with open(args.preds_path, 'w') as f:
         writer = csv.DictWriter(f, fieldnames=full_data[0].row.keys())
         writer.writeheader()
 
         for datapoint in full_data:
             writer.writerow(datapoint.row)
+    """
 
-    return avg_preds
+    return avg_preds, dict(full_data[0].row)
 
 
-def chemprop_predict() -> None:
+def chemprop_predict():
     """Parses Chemprop predicting arguments and runs prediction using a trained Chemprop model.
 
     This is the entry point for the command line command :code:`chemprop_predict`.
     """
-    make_predictions(args=PredictArgs().parse_args())
+    args=PredictArgs().parse_args()
+    all_smiles = None
+    if args.smiles is not None:
+        smiles = args.smiles.split(',')
+        all_smiles = [ [s] for s in smiles]
+    
+    _, preds = make_predictions(args=PredictArgs().parse_args(), smiles=all_smiles)
+    return preds
